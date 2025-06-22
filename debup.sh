@@ -177,7 +177,8 @@ update_toolchain_packages() {
                 return 1
             fi
 
-            # Remove current installation before installing the new version.
+            # Remove any previous installations as recommended by
+            # https://go.dev/doc/install.
             rm -rf "$go_install_dir/go" &>/dev/null
             tar -C "$go_install_dir" -xzf /tmp/go.tar.gz
 
