@@ -41,7 +41,7 @@ Usage: debup [OPTION]
 Options:
   -c, --check-updates
           Search for package updates without installing them
-  -f, --full, (empy option)
+  -f, --full, (empty option)
           Perform full system update
   -s, --system
           Update the operating system packages only
