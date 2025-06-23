@@ -1,7 +1,6 @@
 # Debian Update Script
 
-**Debup** is shell script written in Bash to keep your Debian-based systems up to date. It is as a front-end wrapper for the different package
-managers' 'update' command.
+**Debup** is shell script written in Bash to keep your Debian-based systems up to date. It is as a front-end wrapper for different package managers' 'update' command.
 
 **Supported Package Managers**
 
@@ -35,4 +34,4 @@ source ~/.bashrc
 $ debup [OPTION]
 ```
 
-Run `debup --help` to get the full list of available ptions.
+Run `debup --help` to get the full list of available options.
