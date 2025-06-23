@@ -16,6 +16,10 @@
 # Syntax:
 #   debup [OPTION]
 
+##
+## PRINT MESSAGE TYPES
+##
+
 info() {
     echo -e "\e[1;34m:: \e[1;37m$1\e[0m" >&1
 }
@@ -49,6 +53,10 @@ Options:
           Display this message
 EOF
 }
+
+##
+## GET_ PACKAGE MANAGERS & UPDATES
+##
 
 get_toolchain_managers() {
     toolchain_updates=()
@@ -111,39 +119,9 @@ get_updates() {
     return 0
 }
 
-update_system_packages() {
-    sudo apt update &> /dev/null
-    if [[ $(apt list --upgradable 2>/dev/null | wc -l) -gt 1 ]]; then
-        info "Installing system updates..."
-        sudo apt upgrade -y
-
-        if [[ "$(sudo apt autoremove --dry-run --assume-no | \
-        grep "Removing:" | \
-        awk '{print $2}' | tr -d ',')" -gt 0 ]]; then
-            info "Cleaning up packages..."
-            sudo apt autoremove -y
-        fi
-        info "System packages have been updated."
-    fi
-
-    return $?
-}
-
-update_universal_packages() {
-    get_universal_package_managers
-    if [[ -n "${universal_package_updates[*]}" ]]; then
-        if [[ "$flatpak_updates" != 0 ]]; then
-            info "Installing Flatpak updates..."
-            flatpak update -y
-            info "Flatpak packages have been updated."
-        fi
-    else
-        warn "No universal package manager was detected. Skipping updates."
-        return 0
-    fi
-
-    return $?
-}
+##
+## UPDATE_ SYSTEM COMPONENTS & SOFTWARE
+##
 
 update_toolchain_packages() {
     get_toolchain_managers
@@ -156,7 +134,8 @@ update_toolchain_packages() {
 
         # Vanilla Rust doesn't have a 'cargo update' equivalent.
         # The method of updating installed packages is using
-        # 'cargo install' to install the latest available version.
+        # 'cargo install' to install the latest available version
+        # of an already installed package.
         cargo install $(cargo install --list | \
         grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | \
         cut -f1 -d' ') &> /dev/null
@@ -196,6 +175,44 @@ update_toolchain_packages() {
 
     return $?
 }
+
+update_universal_packages() {
+    get_universal_package_managers
+    if [[ -n "${universal_package_updates[*]}" ]]; then
+        if [[ "$flatpak_updates" != 0 ]]; then
+            info "Installing Flatpak updates..."
+            flatpak update -y
+            info "Flatpak packages have been updated."
+        fi
+    else
+        warn "No universal package manager was detected. Skipping updates."
+        return 0
+    fi
+
+    return $?
+}
+
+update_system_packages() {
+    sudo apt update &> /dev/null
+    if [[ $(apt list --upgradable 2>/dev/null | wc -l) -gt 1 ]]; then
+        info "Installing system updates..."
+        sudo apt upgrade -y
+
+        if [[ "$(sudo apt autoremove --dry-run --assume-no | \
+        grep "Removing:" | \
+        awk '{print $2}' | tr -d ',')" -gt 0 ]]; then
+            info "Cleaning up packages..."
+            sudo apt autoremove -y
+        fi
+        info "System packages have been updated."
+    fi
+
+    return $?
+}
+
+##
+## MAIN FUNCTION
+##
 
 main() {
     if [[ -z $BASH_VERSION ]]; then
