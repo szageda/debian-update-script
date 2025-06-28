@@ -234,7 +234,7 @@ main() {
             update_toolchain_packages
             ;;
         *)
-            err "Invalid command: "$command""
+            err "Invalid command: $command"
             err "Run 'debup --help' for available commands."
             return 0
             ;;
