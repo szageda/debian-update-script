@@ -126,7 +126,7 @@ get_updates() {
 update_toolchain_packages() {
     get_toolchain_managers
     if [[ -n "${toolchain_updates[*]}" ]]; then
-        if [[ "$rust_updates" -gt 0 ]]; then
+        if [[ "$rustup_updates" -gt 0 ]]; then
             info "Installing Rust updates..."
             rustup update
             info "Rust has been updated."
@@ -149,7 +149,7 @@ update_toolchain_packages() {
             fi
 
             info "Installing Go updates..."
-            wget "https://go.dev/dl/go$go_latest_ver.linux-amd64.tar.gz" -O /tmp/go.tar.gz
+            wget "https://go.dev/dl/go$go_latest_version.linux-amd64.tar.gz" -O /tmp/go.tar.gz
 
             if [[ $? != 0 ]]; then
                 err "Failed to download the latest Go version. Please check the output for details."
