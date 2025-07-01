@@ -72,8 +72,11 @@ get_toolchain_managers() {
     fi
 
     if command -v go &> /dev/null; then
-        go_local_version="$(go version | awk '{print $3}' | sed 's/go//')"
-        go_latest_version="$(curl -s https://go.dev/VERSION?m=text | grep -oP 'go\K[0-9.]+')"
+        go_local_version="$(go version \
+            | awk '{print $3}' \
+            | sed 's/go//')"
+        go_latest_version="$(curl -s https://go.dev/VERSION?m=text \
+            | grep -oP 'go\K[0-9.]+')"
 
         if [[ "$go_local_version" != "$go_latest_version" ]]; then
             toolchain_updates+=("Go (${go_local_version} -> ${go_latest_version})")
@@ -110,9 +113,11 @@ get_updates() {
         info "Searching for developer toolchain updates..."
     fi
 
-    echo -e "\n          \e[1;32mSystem\e[0m $(cat /etc/os-release | grep -i pretty_name | cut -d= -f2 | tr -d '"')"
+    echo -e "\n          \e[1;32mSystem\e[0m $(cat /etc/os-release \
+        | grep -i pretty_name | cut -d= -f2 | tr -d '"')"
     echo -e "     \e[1;32mAPT version\e[0m $(apt --version | awk '{print $2}')"
-    echo -e "  \e[1;32mSystem Updates\e[0m $(apt list --upgradable 2> /dev/null | awk 'NR>1' | wc -l)"
+    echo -e "  \e[1;32mSystem Updates\e[0m $(apt list --upgradable 2> /dev/null \
+        | awk 'NR>1' | wc -l)"
     echo -e "   \e[1;32mOther Updates\e[0m ${universal_package_updates[*]:-"--"}"
     echo -e "                 ${toolchain_updates[*]:-}"
 
@@ -136,9 +141,9 @@ update_toolchain_packages() {
         # The method of updating installed packages is using
         # 'cargo install' to install the latest available version
         # of an already installed package.
-        cargo install $(cargo install --list | \
-        grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | \
-        cut -f1 -d' ') &> /dev/null
+        cargo install $(cargo install --list \
+            | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' \
+            | cut -f1 -d' ') &> /dev/null
 
         if [[ "$go_local_version" != "$go_latest_version" ]]; then
             local go_install_dir="$(command -v go | sed 's|/go.*$||')"
@@ -198,9 +203,9 @@ update_system_packages() {
         info "Installing system updates..."
         sudo apt upgrade -y
 
-        if [[ "$(sudo apt autoremove --dry-run --assume-no | \
-        grep "Removing:" | \
-        awk '{print $6}' | tr -d ',')" != 0 ]]; then
+        if [[ "$(sudo apt autoremove --dry-run --assume-no \
+            | grep "Removing:" | awk '{print $6}' \
+            | tr -d ',')" != 0 ]]; then
             info "Cleaning up packages..."
             sudo apt autoremove -y
         fi
@@ -228,10 +233,10 @@ main() {
         -t|--toolchain) update_toolchain_packages ;;
         -u|--universal) update_universal_packages ;;
         -f|--full|"")
-            get_updates && \
-            update_system_packages && \
-            update_universal_packages && \
-            update_toolchain_packages
+            get_updates \
+            && update_system_packages \
+            && update_universal_packages \
+            && update_toolchain_packages
             ;;
         *)
             err "Invalid command: $command"
