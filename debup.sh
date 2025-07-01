@@ -200,7 +200,7 @@ update_system_packages() {
 
         if [[ "$(sudo apt autoremove --dry-run --assume-no | \
         grep "Removing:" | \
-        awk '{print $2}' | tr -d ',')" -gt 0 ]]; then
+        awk '{print $6}' | tr -d ',')" != 0 ]]; then
             info "Cleaning up packages..."
             sudo apt autoremove -y
         fi
