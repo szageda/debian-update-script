@@ -100,8 +100,8 @@ get_universal_package_managers() {
 }
 
 get_updates() {
-    info "Searching for system updates..."
     sudo apt update &> /dev/null
+    info "Searching for system updates..."
 
     get_universal_package_managers
     if [[ ${#universal_package_updates[@]} -gt 0 ]]; then
